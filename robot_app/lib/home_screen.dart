@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:robot_app/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'status_bar.dart';
 import 'dart:convert'; // For JSON handling
@@ -10,56 +12,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String status = "disconnected";
-  String ipAddress = "";
 
-  @override
-  void initState() {
-    super.initState();
-    _loadIPAddress(); // Load IP address on init
-  }
-
-  Future<void> _loadIPAddress() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      ipAddress = prefs.getString('ip_address') ?? '';
-    });
-    if (ipAddress.isNotEmpty) {
-      _checkConnection(); // Check connection after loading IP
-    } else {
-      setState(() {
-        status = "disconnected";
-      });
-    }
-  }
-
-  Future<void> _checkConnection() async {
-    if (ipAddress.isEmpty) {
-      setState(() {
-        status = "disconnected";
-      });
-      return;
-    }
-    try {
-      final response = await http.get(Uri.parse('http://$ipAddress/status'));
-      if (response.statusCode == 200) {
-        setState(() {
-          status = "connected";
-        });
-      } else {
-        setState(() {
-          status = "unreachable";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        status = "error";
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+     final appState = Provider.of<AppState>(context);
+    appState.initTimer();
     return Scaffold(
       appBar: AppBar(
         title: Text('Control Panel'),
@@ -71,14 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
               // Navigate to the IP Config Screen
               await Navigator.pushNamed(context, '/ip-config');
               // Refresh the IP address and status after returning from IPConfigScreen
-              _loadIPAddress();
+             
             },
           ),
         ],
       ),
       body: Column(
         children: [
-          StatusBar(status: status, ipAddress: ipAddress),
+          StatusBar(),
           Expanded(
             child: Center(
               child: Column(
@@ -125,34 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  void _sendCommand(String command) async {
-    if (ipAddress.isEmpty) {
-      setState(() {
-        status = "disconnected";
-      });
-      return;
-    }
-    try {
-      final response = await http.post(
-        Uri.parse('http://$ipAddress/command'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'command': command}),
-      );
-
-      if (response.statusCode == 200) {
-        setState(() {
-          status = "command sent";
-        });
-      } else {
-        setState(() {
-          status = "command failed";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        status = "error";
-      });
-    }
-  }
+  _sendCommand(String d){}
+  
 }
