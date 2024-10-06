@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:robot_app/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class IPConfigScreen extends StatefulWidget {
   final bool isInitialSetup; // A flag to indicate whether it's initial setup
+  
 
   IPConfigScreen({this.isInitialSetup = false});
 
@@ -12,24 +15,23 @@ class IPConfigScreen extends StatefulWidget {
 
 class _IPConfigScreenState extends State<IPConfigScreen> {
   TextEditingController _ipController = TextEditingController();
+  
 
   @override
-  void initState() {
-    super.initState();
-    _loadIPAddress();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    // Move Provider.of() to didChangeDependencies
+    final appState = Provider.of<AppState>(context, listen: false); 
+    _ipController.text = appState.ipAddress;  // Update the controller with appState value
   }
 
-  Future<void> _loadIPAddress() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _ipController.text = prefs.getString('ip_address') ?? '';
-    });
-  }
 
   Future<void> _saveIPAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('ip_address', _ipController.text);
-
+    final appState = Provider.of<AppState>(context, listen: false);
+   
+    appState.setIp (_ipController.text);
     // Check if this is the initial setup or not
     if (widget.isInitialSetup) {
       // Replace the IP config screen with the home screen
@@ -44,6 +46,7 @@ class _IPConfigScreenState extends State<IPConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
+  
     return Scaffold(
       appBar: AppBar(
         title: Text('Configure IP Address'),
