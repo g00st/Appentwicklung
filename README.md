@@ -17,3 +17,7 @@
 ## App Flow
 ![alt text](/images/App_Flow.svg)
 
+## Current roboter state
+(homing and movemend works via app)
+![alt text](/images/work_in_progress.jpg)
+
