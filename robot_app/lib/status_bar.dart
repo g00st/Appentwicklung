@@ -49,11 +49,11 @@ class StatusBar extends StatelessWidget {
       },
       child: Container(
         color: bgColor,
-        height: 50,
+        height: 100,
         child: Center(
           child: Text(
             'Status: $statusText | IP: ${appState.ipAddress}',
-            style: const TextStyle(color: Colors.white, fontSize: 18),
+            style: const TextStyle(color: Colors.white, fontSize: 25),
           ),
         ),
       ),

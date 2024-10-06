@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robot_app/app_state.dart';
+import 'package:robot_app/robot_control.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'status_bar.dart';
 import 'dart:convert'; // For JSON handling
@@ -38,41 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           StatusBar(),
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_upward, size: 50),
-                        onPressed: () => _sendCommand("up"),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.arrow_downward, size: 50),
-                        onPressed: () => _sendCommand("down"),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.power, size: 50),
-                        onPressed: () => _sendCommand("pump_on"),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.power_off, size: 50),
-                        onPressed: () => _sendCommand("pump_off"),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            child: RobotControlWidget(),
             ),
-          ),
+          
           ElevatedButton(
             onPressed: () {
               // To be implemented - Job creation logic

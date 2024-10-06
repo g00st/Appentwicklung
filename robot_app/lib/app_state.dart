@@ -10,11 +10,14 @@ class AppState extends ChangeNotifier {
   int _counter = 0;
   Status _status = Status(PrinterState.error, "not initialized");
   String _ipAddress = "127.0.0.1";
+  bool _isHomed = false;
  
   // Getters to access private state
   int get counter => _counter;
   Status get status => _status;
   String get ipAddress => _ipAddress;
+  bool get isHomed => _isHomed;
+
   AppState() {
     _loadIPAddress(); // Call the asynchronous IP loading function
   }
@@ -36,9 +39,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
-
   void  setIp (String ip)async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('ip_address', ip);
@@ -58,6 +58,13 @@ class AppState extends ChangeNotifier {
     _timer ??= Timer.periodic(Duration(seconds: 1), (Timer timer) {
       incrementCounter(); // Call the method every second
       updateStatus();
+      if(status.state == PrinterState.ready){
+        getIsHomed();
+      }
     });
+  }
+
+  void getIsHomed()async{
+    _isHomed = await ApiHandler.isXAndZHomed();
   }
 }
