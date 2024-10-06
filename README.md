@@ -12,5 +12,8 @@
   - Enable/disable motors.
 
 ## Architecture
+![alt text](/images/Architecture.svg)
 
 ## App Flow
+![alt text](/images/App_Flow.svg)
+
