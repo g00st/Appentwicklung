@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robot_app/app_state.dart';
+import 'custom_app_bar.dart';
+import 'menu_drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class IPConfigScreen extends StatefulWidget {
+class ConfigScreen extends StatefulWidget {
   final bool isInitialSetup; // A flag to indicate whether it's initial setup
   
 
-  IPConfigScreen({this.isInitialSetup = false});
+  ConfigScreen({this.isInitialSetup = false});
 
   @override
   _IPConfigScreenState createState() => _IPConfigScreenState();
 }
 
-class _IPConfigScreenState extends State<IPConfigScreen> {
+class _IPConfigScreenState extends State<ConfigScreen> {
   TextEditingController _ipController = TextEditingController();
   
 
@@ -48,11 +50,8 @@ class _IPConfigScreenState extends State<IPConfigScreen> {
   Widget build(BuildContext context) {
   
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Configure IP Address'),
-        automaticallyImplyLeading:
-            !widget.isInitialSetup, // Disable back button during initial setup
-      ),
+        appBar: CustomAppBar(title: 'Robot Control'),
+        drawer: MenuDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -67,6 +66,7 @@ class _IPConfigScreenState extends State<IPConfigScreen> {
               onPressed: _saveIPAddress,
               child: Text('Save'),
             ),
+            Text("add more machine configs if needed")
           ],
         ),
       ),

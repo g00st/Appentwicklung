@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robot_app/api_handler.dart';
 import 'package:robot_app/home_screen.dart';
-import 'package:robot_app/ip_config_screen.dart';
+import 'package:robot_app/config_screen.dart';
 import 'package:robot_app/status_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_state.dart';
+import 'robot_control_page.dart';
+import 'jobs_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,11 +38,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter App State Management',
         home: 
-          isInitialSetup ? IPConfigScreen(isInitialSetup: true) : HomeScreen(),
+          isInitialSetup ? ConfigScreen(isInitialSetup: true) : JobsPage(),
         routes: {
-        '/home': (context) => HomeScreen(),
-        '/ip-config': (context) =>
-            IPConfigScreen(isInitialSetup: false), // Settings screen case
+        '/robot-control': (context) => RobotControlPage(),
+        '/ip-config': (context) => ConfigScreen(isInitialSetup: false),
+        '/jobs': (context) => JobsPage(),
       }
       ),
     );

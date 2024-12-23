@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robot_app/api_handler.dart';
-import 'package:robot_app/app_state.dart';
+import 'app_state.dart'; // Replace with your actual import path
+import 'api_handler.dart'; // Replace with your actual import path
+import 'custom_app_bar.dart';
+import 'menu_drawer.dart';
+import 'error_popup.dart';
 
-class RobotControlWidget extends StatelessWidget {
+class RobotControlPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Access the app state from the Provider
     final appState = Provider.of<AppState>(context);
-
     return Scaffold(
+      appBar: CustomAppBar(title: 'Robot Control'),
+      drawer: MenuDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (appState.status.state == PrinterState.ready) ...[
+              if (!appState.isHomed) // Error condition from AppState
+                Positioned.fill(
+                  child: ErrorPopup(
+                    onHomePressed:
+                        ApiHandler.homeRobot, // Function to home the robot
+                  ),
+                ),
               // Case: Robot is connected but not homed
               // Disarm Motors Section
               ElevatedButton(
@@ -86,8 +97,6 @@ class RobotControlWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // X-axis buttons with ±100
-
               _buildMoveButton(moveFunction, 10),
               SizedBox(width: 10),
               _buildMoveButton(moveFunction, 1),
