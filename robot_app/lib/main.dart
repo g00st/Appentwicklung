@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robot_app/api_handler.dart';
-import 'package:robot_app/home_screen.dart';
 import 'package:robot_app/config_screen.dart';
 import 'package:robot_app/status_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
