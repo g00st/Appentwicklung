@@ -1,70 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robot_app/api_handler.dart';
-import 'package:robot_app/app_state.dart';
+import 'app_state.dart'; // Replace with your actual import path
+import 'api_handler.dart'; // Replace with your actual import path
+import 'custom_app_bar.dart';
+import 'menu_drawer.dart';
+import 'error_popup.dart';
 
-class RobotControlWidget extends StatelessWidget {
+class RobotControlPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Access the app state from the Provider
     final appState = Provider.of<AppState>(context);
-
     return Scaffold(
+      appBar: CustomAppBar(title: 'Robot Control'),
+      drawer: MenuDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (appState.status.state == PrinterState.ready) ...[
+              if (!appState.isHomed) // Error condition from AppState
+                Positioned.fill(
+                  child: ErrorPopup(
+                    onHomePressed:
+                        ApiHandler.homeRobot, // Function to home the robot
+                  ),
+                ),
               // Case: Robot is connected but not homed
-              if (!appState.isHomed) ...[
-                Icon(Icons.warning, color: Colors.red, size: 100),
-                Text("Robot not homed", style: TextStyle(fontSize: 25)),
-                SizedBox(height: 50),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.red, // Change to a more vibrant color
-                    foregroundColor: Colors.white, // Text color
-                    textStyle: TextStyle(fontSize: 25),
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+              // Disarm Motors Section
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange, // Change to a vibrant color
+                  foregroundColor: Colors.white, // Text color
+                  textStyle: TextStyle(fontSize: 25),
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  onPressed: ApiHandler.homeRobot,
-                  child: Text('Home Robot', style: TextStyle(fontSize: 25)),
                 ),
-              ] else ...[
-                // Disarm Motors Section
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange, // Change to a vibrant color
-                    foregroundColor: Colors.white, // Text color
-                    textStyle: TextStyle(fontSize: 25),
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: ApiHandler.disarmRobot,
-                  child: Text('Disarm Motors'),
-                ),
+                onPressed: ApiHandler.disarmRobot,
+                child: Text('Disarm Motors'),
+              ),
 
-                SizedBox(height: 10), // Space between sections
+              SizedBox(height: 10), // Space between sections
 
-                // X Axis Controls
-                _buildAxisControlSection('X', ApiHandler.moveX),
+              // X Axis Controls
+              _buildAxisControlSection('X', ApiHandler.moveX),
 
-                SizedBox(height: 10), // Space between sections
+              SizedBox(height: 10), // Space between sections
 
-                // Z Axis Controls
-                _buildZAxisControlSection(),
+              // Z Axis Controls
+              _buildZAxisControlSection(),
 
-                SizedBox(height: 10), // Space between sections
+              SizedBox(height: 10), // Space between sections
 
-                // Pump Controls
-                _buildPumpControlSection(),
-              ]
+              // Pump Controls
+              _buildPumpControlSection(),
             ] else ...[
               // Case: No connection to robot
               Icon(Icons.error_outline, color: Colors.grey, size: 100),
@@ -106,21 +97,15 @@ class RobotControlWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // X-axis buttons with ±100
-      
               _buildMoveButton(moveFunction, 10),
               SizedBox(width: 10),
               _buildMoveButton(moveFunction, 1),
               SizedBox(width: 10),
               _buildMoveButton(moveFunction, -1),
               SizedBox(width: 10),
-                _buildMoveButton(moveFunction, -10),
-              
-            
-             
+              _buildMoveButton(moveFunction, -10),
             ],
-            
-          ) ,
+          ),
           SizedBox(height: 10),
           if (axis == 'X') ...[
             Row(
@@ -253,9 +238,5 @@ class RobotControlWidget extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void printHi() {
-    print("hi");
   }
 }
