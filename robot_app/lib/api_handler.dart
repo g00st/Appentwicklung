@@ -78,7 +78,8 @@ class ApiHandler {
             PrinterState.networkError, "network error: ${response.statusCode}");
       }
     } catch (e) {
-      return Status(PrinterState.networkError, 'Request to IP: $IP_address timed out, please check if robot is turned on');
+      return Status(PrinterState.networkError,
+          'Request to IP: $IP_address timed out, please check if robot is turned on');
     }
   }
 
@@ -104,9 +105,10 @@ class ApiHandler {
       if (response.statusCode == 200) {
         // Parse the JSON response
         Map<String, dynamic> responseData = jsonDecode(response.body);
-        
+
         // Extract the "homed_axes" field
-        String homedAxes = responseData['result']['status']['toolhead']['homed_axes'];
+        String homedAxes =
+            responseData['result']['status']['toolhead']['homed_axes'];
 
         // Check if X and Z axes are homed
         bool isXHomed = homedAxes.contains('x');
@@ -126,14 +128,11 @@ class ApiHandler {
     }
   }
 
-
-   static Future<void> sendGCode(String gcode) async {
+  static Future<void> sendGCode(String gcode) async {
     final url = Uri.parse('http://$IP_address/printer/gcode/script');
 
     // Body of the POST request - sending the G-code passed as a parameter
-    final body = jsonEncode({
-      "script": gcode
-    });
+    final body = jsonEncode({"script": gcode});
 
     try {
       // Send the POST request
@@ -157,22 +156,24 @@ class ApiHandler {
 
   static Future<void> homeRobot() async {
     return sendGCode("HOME_ZX");
-    }
+  }
 
   static Future<void> disarmRobot() async {
     ctrlPump(false);
     return sendGCode("M84");
-    }
+  }
 
   static Future<void> moveX(int X) async {
     String moveX = "G91\nG1 X$X F6000\nG90";
     return sendGCode(moveX);
-    }
+  }
 
   static Future<void> moveZ(int Z) async {
     String moveZ = "G91\nG1 Z$Z F6000\nG90";
     return sendGCode(moveZ);
-    }
+  }
 
-  static Future<void> ctrlPump(bool on) async { return sendGCode(on?"TURN_PUMP_ON":"TURN_PUMP_OFF");  }
+  static Future<void> ctrlPump(bool on) async {
+    return sendGCode(on ? "TURN_PUMP_ON" : "TURN_PUMP_OFF");
+  }
 }
