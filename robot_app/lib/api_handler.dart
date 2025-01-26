@@ -155,7 +155,7 @@ class ApiHandler {
   }
 
   static Future<void> homeRobot() async {
-    return sendGCode("HOME_ZX");
+    return sendGCode("G28");
   }
 
   static Future<void> disarmRobot() async {
