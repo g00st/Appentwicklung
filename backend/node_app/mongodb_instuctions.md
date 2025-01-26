@@ -4,18 +4,36 @@ Pull a working `Docker` image for the RPI
 ```bash
 docker pull mongodb/mongodb-community-server:4.4.9-ubuntu2004
 ```
-Start the docker container with the follwing settings: <br>
-`-p 27017:27017` map the container port to host port <br>
-set username and password <br>
-`-e MONGO_INITDB_ROOT_USERNAME=admin` <br>
-`-e MONGO_INITDB_ROOT_PASSWORD=admin` <br>
-`--restart always` Container starts on system boot
-```bash
-docker run --name mongodb   -p 27017:27017   -d   -e MONGO_INITDB_ROOT_USERNAME=admin   -e MONGO_INITDB_ROOT_PASSWORD=admin   --restart always --memory="2g" --cpus="2"   mongodb/mongodb-community-server:4.4.9-ubuntu2004
-```
 
-## Work with MongoDB
-Connect to the DB with `mongosh` <br>
-```bash
-mongosh "mongodb://admin:admin@<ip to the server>:27017"
-```
+ Create folder for the DB
+ ```bash
+ mkdir ~/mongoDB
+ cd mongoDB
+ ```
+
+ Create docker volume
+ ```bash
+ docker volume create MongoDB_Storage
+ ```
+
+ Docker compose
+ ```bash
+ touch docker-compose.yaml
+ ```
+ Add the following content to the file with a text editor fo your choise
+ ```plaintext
+ version: '3'
+services:
+  mongodb_4_4_9:
+    image: mongodb/mongodb-community-server:4.4.9-ubuntu2004
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password123
+    ports:
+      - 27017:27017
+    volumes:
+      - MongoDB_Storage:/data/db
+volumes:
+  MongoDB_Storage:
+    external: true
+ ```
