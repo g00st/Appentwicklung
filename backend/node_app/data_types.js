@@ -91,16 +91,16 @@ class Job extends DBObject {
     }
 
     async finished(){
-        (this.completion_count >= this.target_count )
+        return (this.completion_count >= this.target_count )
     }
 
 }
 
 // PlateType class
 class PlateType extends DBObject {
-    constructor({ _id, g_code, Name }) {
+    constructor({ _id, g_code, name }) {
         super({ _id });
-        this.name = Name; 
+        this.name = name; 
         this.g_code = g_code;
     }
     static validate(plateType) {
@@ -128,15 +128,7 @@ class PlateType extends DBObject {
 
 
 
-/**
- * Class representing a Klipper Wrapper.
- * @property {number} _id - The unique identifier for this wrapper instance.
- * @property {string} ip - The printer IP address.
- * @property {WebSocket} websocket - The WebSocket connection instance.
- * @property {number} idCounter - A counter for generating unique JSON-RPC IDs.
- * @property {JSON} status - The current status (can be of any type, adjust if needed).
- * @property {Job} current_job - The current job, which is of type {@link Job} or `null` if no job is set.
- */
+
 class KlipperWrapper {
 
 
@@ -169,7 +161,7 @@ class KlipperWrapper {
             reject(`WebSocket error: ${err}`);
           };
 
-          this.websocket.addEventListener("message", (event) => this.messageListener(event));
+          this.websocket.onmessage =  this.messageListener.bind(this);
         } catch (err) {
           reject(err);
         }
@@ -178,14 +170,14 @@ class KlipperWrapper {
 
    
 
-    messageListener(event) {
+    messageListener(event,hi) {
         try {
           const data = JSON.parse(event.data);
           // Check if this message is the response for our request.+
           if (data.method != "notify_history_changed"){
             return
           }
-          console.log(data)
+          console.log("hi",)
           // Log to a file
           fs.appendFile('log.txt', JSON.stringify(data, null, 2), (err) => {
                 if (err) {
@@ -281,7 +273,7 @@ class KlipperWrapper {
         //test if job  finished
         if (await job.finished()){
             this.current_job = null
-            throw new Error("Job id not found");
+            throw new Error("Job already finished");
         }
         console.log("2")
 
@@ -294,8 +286,8 @@ class KlipperWrapper {
         console.log("3")
 
         //write gcode file 
-        //fs.appendFile('/home/rpi-klipper/printer_data/gcodes/job.gcode', type.g_code, (err) => {
-        fs.writeFile('./job.gcode', type.g_code, (err) => {
+        fs.writeFile('/home/rpi-klipper/printer_data/gcodes/job.gcode', type.g_code, (err) => {
+        //fs.writeFile('./job.gcode', type.g_code, (err) => {
             if (err) {
             this.current_job = null
             console.error('Error writing to file', err);
@@ -306,22 +298,29 @@ class KlipperWrapper {
 
         //ceck staus
         if (!allowedStatuses.includes( this.status)){
+                this.current_job = null
                 throw new Error("Klipper staus not alowed: ");
-            } 
-        let res = await this.sendRpcRequest("printer.print.start", {filename: "job.gcode"});
+            }
+            try{
+                let res = await this.sendRpcRequest("printer.print.start", {filename: "job.gcode"});
+            }catch(error){
+              this.current_job = null
+              throw error
+            }
        
         console.log("5")
         //check if actualy started kinda scuff but who cares 
-        let trys = 10000000;
+        let trys = 100;
         while(true){
             if ( this.status == "in_progress"){
                     console.log("6",this.current_job)
                     return this.current_job
             }  
+            await new Promise(r => setTimeout(r, 20));
             trys -= 1
             if (trys <0 ){
                 console.log("6")
-                this.current_job = null
+                //this.current_job = null
                 throw new Error("nevver recived in_progress staus from clipper " );
             }
         }

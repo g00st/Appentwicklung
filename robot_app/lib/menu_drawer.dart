@@ -46,14 +46,7 @@ class MenuDrawer extends StatelessWidget {
               // Navigate to info or perform some other action
             },
           ),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Log Out'),
-            onTap: () {
-              Navigator.pop(context);
-              // Perform logout or navigate to login screen
-            },
-          ),
+
         ],
       ),
     );

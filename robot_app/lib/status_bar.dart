@@ -28,6 +28,10 @@ class StatusBar extends StatelessWidget {
       case PrinterState.shutdown:
         bgColor = const Color.fromARGB(255, 179, 255, 2); // Light Yellow
         statusText = 'Shutting Down';
+      break;
+        case PrinterState.printing:
+        bgColor = const Color.fromARGB(184, 2, 225, 255); // Light Yellow
+        statusText = 'Job running';
         break;
       case PrinterState.networkError:
         bgColor = const Color.fromARGB(255, 85, 9, 9); // Dark Red
