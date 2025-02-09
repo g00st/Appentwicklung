@@ -20,7 +20,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
     final appState = Provider.of<AppState>(context);
 
     // Show the error dialog if robot is not homed and it hasn't been shown already
-    if (!appState.isHomed && !_dialogShown) {
+    if (!appState.isHomed && !_dialogShown && appState.status.state != PrinterState.networkError) {
       Future.delayed(Duration.zero, () {
         showErrorDialog(
           context,

@@ -36,7 +36,7 @@ class _JobsPageState extends State<JobsPage> {
     appState.initTimer();
 
     // Show the error dialog if robot is not homed and it hasn't been shown already
-    if (!appState.isHomed && !_dialogShown) {
+    if (!appState.isHomed && !_dialogShown && appState.status.state != PrinterState.networkError) {
       Future.delayed(Duration.zero, () {
         showErrorDialog(
           context,

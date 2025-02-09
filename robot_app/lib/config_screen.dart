@@ -189,7 +189,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
     final appState = Provider.of<AppState>(context);
     appState.initTimer();
     return Scaffold(
-      appBar: CustomAppBar(title: 'Robot Control'),
+      appBar: CustomAppBar(title: 'Robot connection'),
       drawer: MenuDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

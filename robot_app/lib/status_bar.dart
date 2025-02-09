@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robot_app/api_handler.dart'; // Assuming this is where PrinterState is defined
+import 'package:robot_app/api_handler.dart';
 import 'package:robot_app/app_state.dart';
 
 class StatusBar extends StatelessWidget {
