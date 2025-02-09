@@ -4,13 +4,48 @@ import 'app_state.dart'; // Replace with your actual import path
 import 'api_handler.dart'; // Replace with your actual import path
 import 'custom_app_bar.dart';
 import 'menu_drawer.dart';
-import 'error_popup.dart';
+import 'error_popup.dart'; // Import your error popup
 
-class RobotControlPage extends StatelessWidget {
+class RobotControlPage extends StatefulWidget {
+  @override
+  _RobotControlPageState createState() => _RobotControlPageState();
+}
+
+class _RobotControlPageState extends State<RobotControlPage> {
+  bool _dialogShown = false;
+
   @override
   Widget build(BuildContext context) {
     // Access the app state from the Provider
     final appState = Provider.of<AppState>(context);
+
+    // Show the error dialog if robot is not homed and it hasn't been shown already
+    if (!appState.isHomed && !_dialogShown) {
+      Future.delayed(Duration.zero, () {
+        showErrorDialog(
+          context,
+          () {
+            // Home the robot
+            ApiHandler.homeRobot();
+            // Dismiss the dialog after homing the robot
+            Navigator.of(context).pop();
+            setState(() {
+              _dialogShown = false;
+            });
+          },
+        );
+        setState(() {
+          _dialogShown = true; // Mark dialog as shown
+        });
+      });
+    } else if (appState.isHomed && _dialogShown) {
+      // If the robot is homed, dismiss the dialog and update state
+      Navigator.of(context).pop();
+      setState(() {
+        _dialogShown = false;
+      });
+    }
+
     return Scaffold(
       appBar: CustomAppBar(title: 'Robot Control'),
       drawer: MenuDrawer(),
@@ -19,13 +54,6 @@ class RobotControlPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (appState.status.state == PrinterState.ready) ...[
-              if (!appState.isHomed) // Error condition from AppState
-                Positioned.fill(
-                  child: ErrorPopup(
-                    onHomePressed:
-                        ApiHandler.homeRobot, // Function to home the robot
-                  ),
-                ),
               // Case: Robot is connected but not homed
               // Disarm Motors Section
               ElevatedButton(

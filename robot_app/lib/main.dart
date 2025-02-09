@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app_state.dart';
 import 'robot_control_page.dart';
 import 'jobs_page.dart';
-import 'simple_plate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +42,6 @@ class MyApp extends StatelessWidget {
         '/robot-control': (context) => RobotControlPage(),
         '/ip-config': (context) => ConfigScreen(isInitialSetup: false),
         '/jobs': (context) => JobsPage(),
-        '/simple-plate': (context) => SimplePlate(),
       }
       ),
     );

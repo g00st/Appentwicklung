@@ -38,15 +38,6 @@ class MenuDrawer extends StatelessWidget {
               // Navigate to settings or perform some other action
             },
           ),
-          ListTile(
-            leading: Icon(Icons.info),
-            title: Text('simple test'),
-            onTap: () {
-              Navigator.pushNamed(context, '/simple-plate');
-              // Navigate to info or perform some other action
-            },
-          ),
-
         ],
       ),
     );

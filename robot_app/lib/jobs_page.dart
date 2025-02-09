@@ -7,16 +7,6 @@ import 'app_state.dart';
 import 'error_popup.dart';
 import 'api_handler.dart';
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'custom_app_bar.dart';
-import 'menu_drawer.dart';
-import 'app_state.dart';
-import 'error_popup.dart';
-import 'api_handler.dart';
-
-// The JobsPage lists all tasks and includes a Floating Action Button
-// to create a new task.
 class JobsPage extends StatefulWidget {
   @override
   _JobsPageState createState() => _JobsPageState();
@@ -24,6 +14,8 @@ class JobsPage extends StatefulWidget {
 
 class _JobsPageState extends State<JobsPage> {
   late Future<List<SeedTask>> _tasksFuture;
+  bool _dialogShown = false;
+  bool _showFinishedTasks = false;
 
   @override
   void initState() {
@@ -43,6 +35,33 @@ class _JobsPageState extends State<JobsPage> {
     final appState = Provider.of<AppState>(context);
     appState.initTimer();
 
+    // Show the error dialog if robot is not homed and it hasn't been shown already
+    if (!appState.isHomed && !_dialogShown) {
+      Future.delayed(Duration.zero, () {
+        showErrorDialog(
+          context,
+          () {
+            // Home the robot
+            ApiHandler.homeRobot();
+            // Dismiss the dialog after homing the robot
+            Navigator.of(context).pop();
+            setState(() {
+              _dialogShown = false;
+            });
+          },
+        );
+        setState(() {
+          _dialogShown = true; // Mark dialog as shown
+        });
+      });
+    } else if (appState.isHomed && _dialogShown) {
+      // If the robot is homed, dismiss the dialog and update state
+      Navigator.of(context).pop();
+      setState(() {
+        _dialogShown = false;
+      });
+    }
+
     return Scaffold(
       appBar: CustomAppBar(title: 'Jobs'),
       drawer: MenuDrawer(),
@@ -51,13 +70,22 @@ class _JobsPageState extends State<JobsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!appState.isHomed)
-              Positioned.fill(
-                child: ErrorPopup(
-                  onHomePressed: ApiHandler.homeRobot,
-                ),
-              ),
             SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Tasks', style: TextStyle(fontSize: 24)),
+                Switch(
+                  value: _showFinishedTasks,
+                  onChanged: (value) {
+                    setState(() {
+                      _showFinishedTasks = value;
+                    });
+                  },
+                ),
+                Text(_showFinishedTasks ? 'Show Finished' : 'Show Unfinished'),
+              ],
+            ),
             Expanded(
               child: RefreshIndicator(
                 // Wrap list with pull-to-refresh
@@ -103,10 +131,19 @@ class _JobsPageState extends State<JobsPage> {
         }
 
         var tasks = snapshot.data!;
+        // Filter tasks based on the toggle for finished or unfinished
+        var filteredTasks = tasks.where((task) {
+          if (_showFinishedTasks) {
+            return task.completionCount >= task.targetCount; // Show finished tasks
+          } else {
+            return task.completionCount < task.targetCount; // Show unfinished tasks
+          }
+        }).toList();
+
         return ListView.builder(
-          itemCount: tasks.length,
+          itemCount: filteredTasks.length,
           itemBuilder: (context, index) {
-            var task = tasks[index];
+            var task = filteredTasks[index];
             return Card(
               margin: EdgeInsets.symmetric(vertical: 8.0),
               elevation: 5,
@@ -483,8 +520,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       controller: _targetCountController,
                       decoration: InputDecoration(labelText: "Target Count"),
                       keyboardType: TextInputType.number,
-                      // Optional: Only allow digits using an input formatter.
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Please enter target count";
@@ -492,14 +527,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         return null;
                       },
                     ),
-                    // Creation Date is auto-generated, so no field is needed.
-                    // Completion Count is auto-set to 0.
                     TextFormField(
                       controller: _finishTimeController,
-                      decoration:
-                          InputDecoration(labelText: "Finish Time (optional)"),
+                      decoration: InputDecoration(labelText: "Finish Time"),
                       keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
