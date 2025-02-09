@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'custom_app_bar.dart';
 import 'menu_drawer.dart';
 import 'app_state.dart';
@@ -22,7 +23,7 @@ class _JobsPageState extends State<JobsPage> {
   @override
   void initState() {
     super.initState();
-    _loadTasks(); // Fetch tasks on initialization
+    _loadTasks(); // Fetch tasks on initialization.
   }
 
   // Function to reload tasks.
@@ -75,7 +76,7 @@ class _JobsPageState extends State<JobsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 20),
-            // Modified header: Only the filter icon is shown on the right.
+            // Header row with only the filter icon on the right.
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -90,7 +91,8 @@ class _JobsPageState extends State<JobsPage> {
                       }
                     });
                   },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
                     CheckedPopupMenuItem<String>(
                       value: 'unfinished',
                       checked: _showUnfinishedTasks,
@@ -166,7 +168,8 @@ class _JobsPageState extends State<JobsPage> {
               elevation: 5,
               color: task.completionCount >= task.targetCount
                   ? const Color.fromARGB(255, 120, 221, 106)
-                  : Colors.white, // Change background color based on completion.
+                  : Colors
+                      .white, // Change background color based on completion.
               child: ListTile(
                 leading: Icon(Icons.work, color: Colors.blue),
                 title: Text(task.seedType),
@@ -319,6 +322,24 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               final SeedTask task = snapshot.data!["task"];
               final String plateName = snapshot.data!["plateName"] ?? "Unknown";
 
+              // Format the creation date.
+              final creationDateTime = DateTime.parse(task.creationDate);
+              final formattedCreationDate =
+                  DateFormat('yyyy-MM-dd HH:mm:ss').format(creationDateTime);
+
+              // Convert finish time (milliseconds) to DateTime and format it.
+              final finishDateTime = task.finishTime != null
+                  ? DateTime.fromMillisecondsSinceEpoch(task.finishTime!)
+                  : null;
+              final formattedFinishTime = finishDateTime != null
+                  ? DateFormat('yyyy-MM-dd HH:mm:ss').format(finishDateTime)
+                  : 'Task not finished';
+
+              // Calculate the duration between creation and finish time.
+              final durationString = finishDateTime != null
+                  ? "${finishDateTime.difference(creationDateTime).inHours}h ${finishDateTime.difference(creationDateTime).inMinutes.remainder(60)}m"
+                  : '';
+
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -327,41 +348,49 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                     // Display Completion Count / Target Count at the top.
                     Center(
                       child: Text(
-                        "${task.completionCount} / ${task.targetCount}",
+                        "${task.completionCount} / ${task.targetCount} completed",
                         style: TextStyle(
                             fontSize: 32, fontWeight: FontWeight.bold),
                       ),
                     ),
                     SizedBox(height: 20),
-                    // Seed Type.
                     Text(
                       "Seed Type: ${task.seedType}",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    Divider(),
-                    // Plate Type (Name).
+
+                    Divider(thickness: 4),
                     Text(
                       "Plate Type: $plateName",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    Divider(),
-                    // Other Task Info.
-                    Text("ID: ${task.id}", style: TextStyle(fontSize: 18)),
-                    Text("Created: ${task.creationDate}",
-                        style: TextStyle(fontSize: 18)),
-                    Text("Finish Time: ${task.finishTime ?? 'N/A'}",
-                        style: TextStyle(fontSize: 18)),
-                    Divider(),
+
+                    Divider(thickness: 4),
+                    Text("Created: $formattedCreationDate",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    Text("Finish Time: $formattedFinishTime",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+
+                    Divider(thickness: 4),
+                    Text("Duration: $durationString",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    Divider(thickness: 4, color: Colors.black,),
                     // RUN TASK Button.
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: (task.completionCount >= task.targetCount)
-                              ? Colors.green // Completed state.
-                              : (isReady ? Colors.red : Colors.grey), // Active or disabled.
+                          backgroundColor:
+                              (task.completionCount >= task.targetCount)
+                                  ? Colors.green // Completed state.
+                                  : (isReady
+                                      ? Colors.red
+                                      : Colors.grey), // Active or disabled.
                           foregroundColor: Colors.black,
                           padding: EdgeInsets.symmetric(vertical: 16),
                           disabledBackgroundColor: Colors.grey,
@@ -527,7 +556,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     ),
                     TextFormField(
                       controller: _finishTimeController,
-                      decoration: InputDecoration(labelText: "Finish Time"),
+                      decoration:
+                          InputDecoration(labelText: "Finish Time (ms)"),
                       keyboardType: TextInputType.number,
                     ),
                     SizedBox(height: 20),
