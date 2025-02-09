@@ -15,7 +15,9 @@ class JobsPage extends StatefulWidget {
 class _JobsPageState extends State<JobsPage> {
   late Future<List<SeedTask>> _tasksFuture;
   bool _dialogShown = false;
-  bool _showFinishedTasks = false;
+  // Two booleans for filtering finished and unfinished tasks independently.
+  bool _showFinishedTasks = true;
+  bool _showUnfinishedTasks = true;
 
   @override
   void initState() {
@@ -23,7 +25,7 @@ class _JobsPageState extends State<JobsPage> {
     _loadTasks(); // Fetch tasks on initialization
   }
 
-  // Function to reload tasks
+  // Function to reload tasks.
   void _loadTasks() {
     setState(() {
       _tasksFuture = ApiHandler.getTasks();
@@ -35,15 +37,17 @@ class _JobsPageState extends State<JobsPage> {
     final appState = Provider.of<AppState>(context);
     appState.initTimer();
 
-    // Show the error dialog if robot is not homed and it hasn't been shown already
-    if (!appState.isHomed && !_dialogShown && appState.status.state != PrinterState.networkError) {
+    // Show the error dialog if the robot is not homed and it hasn't been shown already.
+    if (!appState.isHomed &&
+        !_dialogShown &&
+        appState.status.state != PrinterState.networkError) {
       Future.delayed(Duration.zero, () {
         showErrorDialog(
           context,
           () {
-            // Home the robot
+            // Home the robot.
             ApiHandler.homeRobot();
-            // Dismiss the dialog after homing the robot
+            // Dismiss the dialog after homing the robot.
             Navigator.of(context).pop();
             setState(() {
               _dialogShown = false;
@@ -51,11 +55,11 @@ class _JobsPageState extends State<JobsPage> {
           },
         );
         setState(() {
-          _dialogShown = true; // Mark dialog as shown
+          _dialogShown = true; // Mark dialog as shown.
         });
       });
     } else if (appState.isHomed && _dialogShown) {
-      // If the robot is homed, dismiss the dialog and update state
+      // If the robot is homed, dismiss the dialog and update state.
       Navigator.of(context).pop();
       setState(() {
         _dialogShown = false;
@@ -71,26 +75,41 @@ class _JobsPageState extends State<JobsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 20),
+            // Modified header: Only the filter icon is shown on the right.
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text('Tasks', style: TextStyle(fontSize: 24)),
-                Switch(
-                  value: _showFinishedTasks,
-                  onChanged: (value) {
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.filter_list),
+                  onSelected: (value) {
                     setState(() {
-                      _showFinishedTasks = value;
+                      if (value == 'unfinished') {
+                        _showUnfinishedTasks = !_showUnfinishedTasks;
+                      } else if (value == 'finished') {
+                        _showFinishedTasks = !_showFinishedTasks;
+                      }
                     });
                   },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    CheckedPopupMenuItem<String>(
+                      value: 'unfinished',
+                      checked: _showUnfinishedTasks,
+                      child: Text('Show Unfinished'),
+                    ),
+                    CheckedPopupMenuItem<String>(
+                      value: 'finished',
+                      checked: _showFinishedTasks,
+                      child: Text('Show Finished'),
+                    ),
+                  ],
                 ),
-                Text(_showFinishedTasks ? 'Show Finished' : 'Show Unfinished'),
               ],
             ),
             Expanded(
               child: RefreshIndicator(
-                // Wrap list with pull-to-refresh
+                // Wrap list with pull-to-refresh.
                 onRefresh: () async {
-                  _loadTasks(); // Reload data when user pulls down
+                  _loadTasks(); // Reload data when user pulls down.
                 },
                 child: _buildJobList(),
               ),
@@ -131,13 +150,11 @@ class _JobsPageState extends State<JobsPage> {
         }
 
         var tasks = snapshot.data!;
-        // Filter tasks based on the toggle for finished or unfinished
+        // Filter tasks based on the selected checkboxes.
         var filteredTasks = tasks.where((task) {
-          if (_showFinishedTasks) {
-            return task.completionCount >= task.targetCount; // Show finished tasks
-          } else {
-            return task.completionCount < task.targetCount; // Show unfinished tasks
-          }
+          bool isFinished = task.completionCount >= task.targetCount;
+          return (isFinished && _showFinishedTasks) ||
+              (!isFinished && _showUnfinishedTasks);
         }).toList();
 
         return ListView.builder(
@@ -149,7 +166,7 @@ class _JobsPageState extends State<JobsPage> {
               elevation: 5,
               color: task.completionCount >= task.targetCount
                   ? const Color.fromARGB(255, 120, 221, 106)
-                  : Colors.white, // Change background color
+                  : Colors.white, // Change background color based on completion.
               child: ListTile(
                 leading: Icon(Icons.work, color: Colors.blue),
                 title: Text(task.seedType),
@@ -162,7 +179,7 @@ class _JobsPageState extends State<JobsPage> {
                       builder: (context) => JobDetailsScreen(taskId: task.id),
                     ),
                   );
-                  _loadTasks(); // Reload tasks when returning
+                  _loadTasks(); // Reload tasks when returning.
                 },
               ),
             );
@@ -184,7 +201,7 @@ class JobDetailsScreen extends StatefulWidget {
 
 class _JobDetailsScreenState extends State<JobDetailsScreen> {
   late Future<Map<String, dynamic>> _detailFuture;
-  PrinterState? _previousState; // Track previous printer state
+  PrinterState? _previousState; // Track previous printer state.
 
   @override
   void initState() {
@@ -243,7 +260,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     if (confirmDelete == true) {
       try {
         await ApiHandler.deleteTask(taskId);
-        Navigator.pop(context, true); // Return to refresh job list
+        Navigator.pop(context, true); // Return to refresh job list.
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to delete task: $e")),
@@ -258,12 +275,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       builder: (context, appState, child) {
         bool isReady = appState.status.state == PrinterState.ready;
 
-        // Check if the state changed to "ready" (from any other state)
+        // Check if the state changed to "ready" (from any other state).
         if (_previousState != PrinterState.ready && isReady) {
-          _detailFuture = _loadDetails(); // Fetch only once on transition
+          _detailFuture = _loadDetails(); // Refresh details on state change.
         }
 
-        // Update the previous state for the next comparison
+        // Update the previous state for the next comparison.
         _previousState = appState.status.state;
 
         return Scaffold(
@@ -272,7 +289,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.pop(context, true); // Refresh when returning
+                Navigator.pop(context, true); // Refresh when returning.
               },
             ),
             actions: [
@@ -307,7 +324,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Completion Count / Target Count at the Top
+                    // Display Completion Count / Target Count at the top.
                     Center(
                       child: Text(
                         "${task.completionCount} / ${task.targetCount}",
@@ -316,54 +333,43 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-
-                    // Seed Type
+                    // Seed Type.
                     Text(
                       "Seed Type: ${task.seedType}",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Divider(),
-
-                    // Plate Type (Name)
+                    // Plate Type (Name).
                     Text(
                       "Plate Type: $plateName",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Divider(),
-
-                    // Other Task Info
+                    // Other Task Info.
                     Text("ID: ${task.id}", style: TextStyle(fontSize: 18)),
                     Text("Created: ${task.creationDate}",
                         style: TextStyle(fontSize: 18)),
                     Text("Finish Time: ${task.finishTime ?? 'N/A'}",
                         style: TextStyle(fontSize: 18)),
                     Divider(),
-
-                    // RUN TASK Button
+                    // RUN TASK Button.
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: (task.completionCount >=
-                                  task.targetCount)
-                              ? Colors.green // Completed state
-                              : (isReady
-                                  ? Colors.red
-                                  : Colors.grey), // Active or disabled state
-                          foregroundColor: Colors.black, // Keeps text visible
+                          backgroundColor: (task.completionCount >= task.targetCount)
+                              ? Colors.green // Completed state.
+                              : (isReady ? Colors.red : Colors.grey), // Active or disabled.
+                          foregroundColor: Colors.black,
                           padding: EdgeInsets.symmetric(vertical: 16),
-                          disabledBackgroundColor: Colors
-                              .grey, // Explicitly sets background when disabled
-                          disabledForegroundColor: Colors
-                              .black, // Ensures text remains visible when disabled
+                          disabledBackgroundColor: Colors.grey,
+                          disabledForegroundColor: Colors.black,
                         ),
                         onPressed: (task.completionCount >= task.targetCount)
-                            ? null // Disable button when task is completed
-                            : (isReady
-                                ? () => _runTask(task)
-                                : null), // Normal behavior
+                            ? null
+                            : (isReady ? () => _runTask(task) : null),
                         child: Text(
                           (task.completionCount >= task.targetCount)
                               ? "Task Completed"
@@ -394,13 +400,12 @@ class CreateTaskScreen extends StatefulWidget {
 class _CreateTaskScreenState extends State<CreateTaskScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers for form fields (removed creationDate and completionCount)
+  // Controllers for form fields (creationDate and completionCount are auto-handled).
   final TextEditingController _seedTypeController = TextEditingController();
   final TextEditingController _targetCountController = TextEditingController();
   final TextEditingController _finishTimeController = TextEditingController();
 
-  String?
-      _selectedPlateId; // The selected plate's id (dropdown now based on id)
+  String? _selectedPlateId; // Selected plate's id.
   List<PlateType> _plateTypes = [];
   bool _isLoading = true;
 
@@ -430,7 +435,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       // Auto-generate creation date as current date in ISO 8601 format.
       final String creationDate = DateTime.now().toIso8601String();
 
-      // Create a new SeedTask with id as null, completionCount as 0.
+      // Create a new SeedTask with id as null and completionCount as 0.
       final newTask = SeedTask(
         id: null,
         seedType: _seedTypeController.text,
@@ -441,21 +446,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         finishTime: int.tryParse(_finishTimeController.text),
       );
 
-      // For debugging, print the new task.
       print("New Task: $newTask");
 
       try {
-        // Call ApiHandler.createTask to save the task to the DB.
         final createdTask = await ApiHandler.createTask(newTask);
         print("Created Task: $createdTask");
-
-        // If creation is successful, pop the screen and return true.
         Navigator.pop(context, true);
       } catch (e) {
-        // Handle any errors that occur during task creation.
         print("Error creating task: $e");
-
-        // Optionally, display a dialog or a snackbar.
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error creating task: $e")),
         );
@@ -500,7 +498,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       value: _selectedPlateId,
                       items: _plateTypes.map((plate) {
                         return DropdownMenuItem<String>(
-                          value: plate.id, // Use plate id as value
+                          value: plate.id,
                           child: Text(plate.name),
                         );
                       }).toList(),
