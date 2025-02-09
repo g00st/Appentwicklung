@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robot_app/api_handler.dart'; // Assuming this is where PrinterState is defined
 import 'package:robot_app/app_state.dart';
-import 'menu_drawer.dart'; // Import the MenuDrawer
 
 class StatusBar extends StatelessWidget {
   @override

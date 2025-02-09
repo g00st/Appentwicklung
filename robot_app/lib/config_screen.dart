@@ -147,8 +147,6 @@ class _ConfigScreenState extends State<ConfigScreen> {
       await prefs.setString('wifi_ssid', _ssid!);
       await prefs.setString('wifi_password', _password!);
 
-      final appState = Provider.of<AppState>(context, listen: false);
-
       if (widget.isInitialSetup) {
         Navigator.pushReplacementNamed(context, '/jobs');
       } else {
