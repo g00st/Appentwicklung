@@ -43,20 +43,7 @@ class DBObject {
     }
 }
 
-// Job class
 class Job extends DBObject {
-        /**
-     * Creates a new Job instance.
-     * 
-     * @param {Object} options - The job options.
-     * @param {string} options._id - The unique identifier for the job.
-     * @param {string} options.seed_type - The type of seed used in the job.
-     * @param {string} options.plate_type - The type of plate used in the job.
-     * @param {number} options.target_count - The target count for the job.
-     * @param {string} options.creation_date - The date the job was created (ISO string or formatted date).
-     * @param {number} options.completion_count - The number of completed tasks in the job.
-     * @param {string|null} options.finish_time - The finish time of the job (ISO string or `null` if not completed).
-     */
     constructor({ _id, seed_type, plate_type, target_count, creation_date, completion_count, finish_time }) {
         super({ _id });
         this.seed_type = seed_type;
@@ -80,14 +67,14 @@ class Job extends DBObject {
 
     async increment() {
         if (this.completion_count < this.target_count) {
-            this.completion_count += 1;  // Fix: Should be incrementing completion_count, not target_count.
+            this.completion_count += 1;  
         }
 
-        if (this.completion_count === this.target_count) {  // Use strict equality (===)
-            this.finish_time = Date.now(); // Fix: Use Date.now() for a timestamp.
+        if (this.completion_count === this.target_count) {  
+            this.finish_time = Date.now(); 
         }
 
-        await this.update(); // Fix: Await the async function properly.
+        await this.update(); 
     }
 
     async finished(){
@@ -96,7 +83,6 @@ class Job extends DBObject {
 
 }
 
-// PlateType class
 class PlateType extends DBObject {
     constructor({ _id, g_code, name }) {
         super({ _id });
@@ -338,15 +324,3 @@ class KlipperWrapper {
 module.exports = { Job, PlateType ,KlipperWrapper};
 
 
-// // Usage example:
-// (async () => {
-//     const klipper = new KlipperWrapper({
-//       g_code: "test.gcode", // or the full path/filename as required by your Moonraker instance
-//       ip: "192.168.2.22",
-//     });
-//     await klipper.connect()
-//     let res = await klipper.sendRpcRequest("printer.print.start", {filename: "test.gcode"})
-   
-//     console.log(res)
-//     // Continue with other non-blocking operations here.
-//   })();

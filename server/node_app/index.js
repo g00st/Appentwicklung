@@ -1,7 +1,7 @@
 // Import required modules
 const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
-const { Job, PlateType,KlipperWrapper } = require('./data_types');
+const { Job, PlateType,KlipperWrapper } = require('./klipper');
 const morgan = require('morgan');
 
 // MongoDB connection URL and database/collection names
@@ -40,7 +40,7 @@ const client = new MongoClient(MONGO_URL);
         PlateType.dbCollection = db.collection(COLLECTION_PLATE_TYPE);
         
         
-        // ------------------------------------------------ Jobs ------------------------------------------
+// ------------------------------------------------ Jobs ------------------------------------------
         app.get('/jobs', async (req, res) => {
             try {
                 const jobs = await Job.getAll();
@@ -90,7 +90,7 @@ const client = new MongoClient(MONGO_URL);
             } catch (err) {
                 res.status(500).json({ message: 'Error deleting job' });
             }
-        });
+        });data_types
 
 
         app.post('/run/:id', async (req, res) => {
@@ -113,7 +113,7 @@ const client = new MongoClient(MONGO_URL);
         
         
         
-        //--------------------------------- PLATES -------------------------------------------
+//--------------------------------- PLATES -------------------------------------------
 
         app.get('/plates', async (req, res) => {
             try {
@@ -170,10 +170,6 @@ const client = new MongoClient(MONGO_URL);
 
 
 
-
-
-
-        // Start the Express server
         app.listen(port, '0.0.0.0',() => {
             console.log(`Server is running on http://localhost:${port}`);
         });
@@ -183,7 +179,6 @@ const client = new MongoClient(MONGO_URL);
     }
 })();
 
-// Graceful shutdown
 process.on('SIGINT', async () => {
     console.log('Closing MongoDB connection');
     await client.close();

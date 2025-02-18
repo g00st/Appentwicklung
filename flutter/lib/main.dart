@@ -9,7 +9,6 @@ import 'jobs_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Check if an IP address is already configured
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? ipAddress = prefs.getString('ip_address');
 
@@ -23,27 +22,19 @@ class MyApp extends StatelessWidget {
   MyApp({required this.isInitialSetup});
   @override
   Widget build(BuildContext context) {
-
-    
- 
-
     return ChangeNotifierProvider(
-      
-
-      // Provide the AppState instance to the widget tree
       create: (_) => AppState(),
       child: MaterialApp(
-        title: 'Flutter App State Management',
-        home: 
-          isInitialSetup ? ConfigScreen(isInitialSetup: true) : JobsPage(),
-        routes: {
-        '/robot-control': (context) => RobotControlPage(),
-        '/ip-config': (context) => ConfigScreen(isInitialSetup: false),
-        '/jobs': (context) => JobsPage(),
-      }
-      ),
+          title: 'Flutter App State Management',
+          home: isInitialSetup
+              ? const ConfigScreen(isInitialSetup: true)
+              : JobsPage(),
+          routes: {
+            '/robot-control': (context) => RobotControlPage(),
+            '/ip-config': (context) =>
+                const ConfigScreen(isInitialSetup: false),
+            '/jobs': (context) => JobsPage(),
+          }),
     );
   }
 }
-
-

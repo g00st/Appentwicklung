@@ -12,7 +12,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 class ConfigScreen extends StatefulWidget {
   final bool isInitialSetup;
 
-  ConfigScreen({this.isInitialSetup = false});
+  const ConfigScreen({super.key, this.isInitialSetup = false});
 
   @override
   _ConfigScreenState createState() => _ConfigScreenState();
@@ -107,7 +107,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Connect to WiFi'),
+        title: const Text('Connect to WiFi'),
         content: Text('SSID: $_ssid\nPassword: $_password'),
         actions: [
           TextButton(
@@ -115,14 +115,14 @@ class _ConfigScreenState extends State<ConfigScreen> {
               Navigator.of(context).pop();
               _qrController?.resumeCamera();
             },
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
               Navigator.of(context).pop();
               await _connectToWifi();
             },
-            child: Text('Connect'),
+            child: const Text('Connect'),
           ),
         ],
       ),
@@ -163,7 +163,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text('Error'),
+        title: const Text('Error'),
         content: Text(message),
         actions: [
           TextButton(
@@ -171,7 +171,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
               Navigator.of(context).pop();
               _qrController?.resumeCamera();
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -209,13 +209,13 @@ class _ConfigScreenState extends State<ConfigScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               flex: 1,
               child: Center(
                 child: _scanResult != null
                     ? Text('Scanned: $_scanResult')
-                    : Text('Point the camera at a WiFi QR code'),
+                    : const Text('Point the camera at a WiFi QR code'),
               ),
             ),
           ],

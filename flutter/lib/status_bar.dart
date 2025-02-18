@@ -8,27 +8,26 @@ class StatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
 
-    Color bgColor = Colors.white24; // Default color
-    String statusText = ""; // Variable to hold the status message
+    Color bgColor = Colors.white24;
+    String statusText = "";
 
     switch (appState.status.state) {
       case PrinterState.error:
-        bgColor = const Color.fromARGB(255, 255, 0, 0); // Red
-        statusText = 'Error';
+        bgColor = const Color.fromARGB(255, 255, 0, 0);
         break;
       case PrinterState.startup:
-        bgColor = const Color.fromARGB(255, 5, 99, 122); // Dark Cyan
+        bgColor = const Color.fromARGB(255, 5, 99, 122);
         statusText = 'Starting Up';
         break;
       case PrinterState.ready:
-        bgColor = const Color.fromARGB(255, 0, 255, 34); // Green
+        bgColor = const Color.fromARGB(255, 0, 255, 34);
         statusText = 'Ready';
         break;
       case PrinterState.shutdown:
-        bgColor = const Color.fromARGB(255, 179, 255, 2); // Light Yellow
+        bgColor = const Color.fromARGB(255, 179, 255, 2);
         statusText = 'Shutting Down';
-      break;
-        case PrinterState.printing:
+        break;
+      case PrinterState.printing:
         bgColor = const Color.fromARGB(184, 2, 225, 255); // Light Yellow
         statusText = 'Job running';
         break;
@@ -43,43 +42,34 @@ class StatusBar extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        // Navigate to the IP configuration screen when tapped
         Navigator.pushNamed(context, '/ip-config');
       },
       onLongPress: () {
-        // Show a snack bar with the alternate message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(appState.status.msg), // Display the alternate message
-            duration: const Duration(seconds: 2), // Duration for the SnackBar
+            content: Text(appState.status.msg),
+            duration: const Duration(seconds: 2),
           ),
         );
       },
       child: Container(
         color: bgColor,
-        height: 40, // Adjusted height for smaller size
-        padding: const EdgeInsets.symmetric(
-            horizontal: 5.0), // Add padding for spacing
+        height: 40,
+        padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: Row(
           children: [
-            // Expanded widget to center the Status text
             Expanded(
-              
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
                   'Status: $statusText',
-                  style: const TextStyle(
-                      color: Colors.white, fontSize: 16), // Smaller font size
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
             ),
-
-            // Right-aligned IP text
             Text(
               'IP: ${appState.ipAddress}',
-              style: const TextStyle(
-                  color: Colors.white, fontSize: 16), // Smaller font size
+              style: const TextStyle(color: Colors.white, fontSize: 16),
             ),
           ],
         ),

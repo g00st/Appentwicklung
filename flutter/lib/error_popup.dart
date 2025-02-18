@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 class ErrorDialog extends StatelessWidget {
   final VoidCallback onHomePressed;
 
-  const ErrorDialog({Key? key, required this.onHomePressed}) : super(key: key);
+  const ErrorDialog({super.key, required this.onHomePressed});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white, // White background for the dialog
-      contentPadding: EdgeInsets.all(15), // Padding inside the dialog
-      titlePadding: EdgeInsets.zero, // Remove padding around the title
+      backgroundColor: Colors.white, 
+      contentPadding: const EdgeInsets.all(15), 
+      titlePadding: EdgeInsets.zero, 
       content: Column(
-        mainAxisSize: MainAxisSize.min, // Adjust the size based on the content
+        mainAxisSize: MainAxisSize.min, 
         children: [
-          Icon(Icons.warning, color: Colors.red, size: 100),
+          const Icon(Icons.warning, color: Colors.red, size: 100),
           const SizedBox(height: 20),
           const Text(
             "Robot not homed",
@@ -31,7 +31,7 @@ class ErrorDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            onPressed: onHomePressed, // Call the passed function
+            onPressed: onHomePressed, 
             child: const Text('Home Robot', style: TextStyle(fontSize: 25)),
           ),
         ],
@@ -40,11 +40,11 @@ class ErrorDialog extends StatelessWidget {
   }
 }
 
-// This function is used to show the error dialog
 void showErrorDialog(BuildContext context, VoidCallback onHomePressed) {
   showDialog(
     context: context,
-    barrierDismissible: false, // Prevent dismissing the dialog by tapping outside
+    barrierDismissible:
+        false, 
     builder: (BuildContext context) {
       return ErrorDialog(onHomePressed: onHomePressed);
     },

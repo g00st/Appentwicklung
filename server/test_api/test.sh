@@ -2,7 +2,6 @@
 
 BASE_URL="http://192.168.2.24:3000"
 return=0
-# Function to handle the response status check with colors
 check_response() {
     local response=$1
     local status_code=$2

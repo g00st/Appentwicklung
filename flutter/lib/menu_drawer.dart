@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MenuDrawer extends StatelessWidget {
+  const MenuDrawer({super.key});
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          // Drawer Header
-          DrawerHeader(
+          const DrawerHeader(
             decoration: BoxDecoration(
               color: Colors.blue,
             ),
@@ -20,32 +20,25 @@ class MenuDrawer extends StatelessWidget {
               ),
             ),
           ),
-          // Menu Buttons
           ListTile(
-            leading: Icon(Icons.gamepad),
-            title: Text('Control'),
+            leading: const Icon(Icons.gamepad),
+            title: const Text('Control'),
             onTap: () {
-              Navigator.pushNamed(
-                  context, '/robot-control'); // Close the menu when tapped
-              // Navigate to home or perform some other action
+              Navigator.pushNamed(context, '/robot-control');
             },
           ),
           ListTile(
-            leading: Icon(Icons.work),
-            title: Text('Jobs'),
+            leading: const Icon(Icons.work),
+            title: const Text('Jobs'),
             onTap: () {
               Navigator.pushNamed(context, '/jobs');
-
-              // Navigate to settings or perform some other action
             },
           ),
           ListTile(
-            leading: Icon(Icons.signal_wifi_4_bar_lock_rounded),
-            title: Text('Robot connection'),
+            leading: const Icon(Icons.signal_wifi_4_bar_lock_rounded),
+            title: const Text('Robot connection'),
             onTap: () {
               Navigator.pushNamed(context, '/ip-config');
-
-              // Navigate to settings or perform some other action
             },
           ),
         ],

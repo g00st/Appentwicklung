@@ -7,6 +7,8 @@ import 'menu_drawer.dart';
 import 'error_popup.dart'; // Import your error popup
 
 class RobotControlPage extends StatefulWidget {
+  const RobotControlPage({super.key});
+
   @override
   _RobotControlPageState createState() => _RobotControlPageState();
 }
@@ -20,7 +22,9 @@ class _RobotControlPageState extends State<RobotControlPage> {
     final appState = Provider.of<AppState>(context);
 
     // Show the error dialog if robot is not homed and it hasn't been shown already
-    if (!appState.isHomed && !_dialogShown && appState.status.state != PrinterState.networkError) {
+    if (!appState.isHomed &&
+        !_dialogShown &&
+        appState.status.state != PrinterState.networkError) {
       Future.delayed(Duration.zero, () {
         showErrorDialog(
           context,
@@ -47,8 +51,8 @@ class _RobotControlPageState extends State<RobotControlPage> {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Robot Control'),
-      drawer: MenuDrawer(),
+      appBar: const CustomAppBar(title: 'Robot Control'),
+      drawer: const MenuDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -60,37 +64,38 @@ class _RobotControlPageState extends State<RobotControlPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange, // Change to a vibrant color
                   foregroundColor: Colors.white, // Text color
-                  textStyle: TextStyle(fontSize: 25),
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                  textStyle: const TextStyle(fontSize: 25),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 onPressed: ApiHandler.disarmRobot,
-                child: Text('Disarm Motors'),
+                child: const Text('Disarm Motors'),
               ),
 
-              SizedBox(height: 10), // Space between sections
+              const SizedBox(height: 10), // Space between sections
 
               // X Axis Controls
               _buildAxisControlSection('X', ApiHandler.moveX),
 
-              SizedBox(height: 10), // Space between sections
+              const SizedBox(height: 10), // Space between sections
 
               // Z Axis Controls
               _buildZAxisControlSection(),
 
-              SizedBox(height: 10), // Space between sections
+              const SizedBox(height: 10), // Space between sections
 
               // Pump Controls
               _buildPumpControlSection(),
             ] else ...[
               // Case: No connection to robot
-              Icon(Icons.error_outline, color: Colors.grey, size: 100),
-              Text("No Connection", style: TextStyle(fontSize: 25)),
+              const Icon(Icons.error_outline, color: Colors.grey, size: 100),
+              const Text("No Connection", style: TextStyle(fontSize: 25)),
               Text(
                 appState.status.msg,
-                style: TextStyle(fontSize: 20, color: Colors.redAccent),
+                style: const TextStyle(fontSize: 20, color: Colors.redAccent),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -102,12 +107,12 @@ class _RobotControlPageState extends State<RobotControlPage> {
 
   Widget _buildAxisControlSection(String axis, Function(int) moveFunction) {
     return Container(
-      padding: EdgeInsets.all(16.0),
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 8.0,
@@ -119,28 +124,28 @@ class _RobotControlPageState extends State<RobotControlPage> {
         children: [
           Text(
             '$axis Axis Controls',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildMoveButton(moveFunction, 10),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               _buildMoveButton(moveFunction, 1),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               _buildMoveButton(moveFunction, -1),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               _buildMoveButton(moveFunction, -10),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           if (axis == 'X') ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildMoveButton(moveFunction, 100),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 _buildMoveButton(moveFunction, -100),
               ],
             )
@@ -152,12 +157,12 @@ class _RobotControlPageState extends State<RobotControlPage> {
 
   Widget _buildZAxisControlSection() {
     return Container(
-      padding: EdgeInsets.all(16.0),
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 8.0,
@@ -167,20 +172,20 @@ class _RobotControlPageState extends State<RobotControlPage> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'Z Axis Controls',
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildMoveButton(ApiHandler.moveZ, 10),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               _buildMoveButton(ApiHandler.moveZ, 1),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               _buildMoveButton(ApiHandler.moveZ, -1),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               _buildMoveButton(ApiHandler.moveZ, -10),
             ],
           ),
@@ -196,7 +201,8 @@ class _RobotControlPageState extends State<RobotControlPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue, // Use a vibrant color for visibility
           foregroundColor: Colors.white, // Text color
-          padding: EdgeInsets.symmetric(vertical: 15), // Add vertical padding
+          padding:
+              const EdgeInsets.symmetric(vertical: 15), // Add vertical padding
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -208,12 +214,12 @@ class _RobotControlPageState extends State<RobotControlPage> {
 
   Widget _buildPumpControlSection() {
     return Container(
-      padding: EdgeInsets.all(16.0),
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 8.0,
@@ -223,7 +229,7 @@ class _RobotControlPageState extends State<RobotControlPage> {
       ),
       child: Column(
         children: [
-          Text(
+          const Text(
             'Pump Controls',
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
@@ -237,15 +243,15 @@ class _RobotControlPageState extends State<RobotControlPage> {
                     backgroundColor:
                         Colors.green, // Use a vibrant color for visibility
                     foregroundColor: Colors.white, // Text color
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text('ON'),
+                  child: const Text('ON'),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: ElevatedButton(
                   onPressed: () => ApiHandler.ctrlPump(false),
@@ -253,12 +259,12 @@ class _RobotControlPageState extends State<RobotControlPage> {
                     backgroundColor:
                         Colors.red, // Use a vibrant color for visibility
                     foregroundColor: Colors.white, // Text color
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text('OFF'),
+                  child: const Text('OFF'),
                 ),
               ),
             ],
