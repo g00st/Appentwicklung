@@ -39,6 +39,10 @@ dependencies:
   http: ^1.2.2
   provider: ^6.0.0
   dio: ^5.7.0
+  qr_code_scanner_plus: ^2.0.9
+  wifi_iot: ^0.3.19
+  connectivity_plus: ^5.0.2
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

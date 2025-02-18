@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robot_app/api_handler.dart'; // Assuming this is where PrinterState is defined
+import 'package:robot_app/api_handler.dart';
 import 'package:robot_app/app_state.dart';
-import 'menu_drawer.dart'; // Import the MenuDrawer
 
 class StatusBar extends StatelessWidget {
   @override
@@ -28,6 +27,10 @@ class StatusBar extends StatelessWidget {
       case PrinterState.shutdown:
         bgColor = const Color.fromARGB(255, 179, 255, 2); // Light Yellow
         statusText = 'Shutting Down';
+      break;
+        case PrinterState.printing:
+        bgColor = const Color.fromARGB(184, 2, 225, 255); // Light Yellow
+        statusText = 'Job running';
         break;
       case PrinterState.networkError:
         bgColor = const Color.fromARGB(255, 85, 9, 9); // Dark Red

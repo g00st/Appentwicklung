@@ -25,7 +25,7 @@ class AppState extends ChangeNotifier {
   // Method to load the IP address from SharedPreferences asynchronously
   Future<void> _loadIPAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _ipAddress = prefs.getString('ip_address') ?? '';
+    _ipAddress = prefs.getString('ip_address') ?? '172.25.200.10';
     ApiHandler.IP_address = _ipAddress;
 
     // Notify listeners that the IP address has been loaded

@@ -22,15 +22,16 @@ class MenuDrawer extends StatelessWidget {
           ),
           // Menu Buttons
           ListTile(
-            leading: Icon(Icons.home),
+            leading: Icon(Icons.gamepad),
             title: Text('Control'),
             onTap: () {
-              Navigator.pushNamed(context, '/robot-control'); // Close the menu when tapped
+              Navigator.pushNamed(
+                  context, '/robot-control'); // Close the menu when tapped
               // Navigate to home or perform some other action
             },
           ),
           ListTile(
-            leading: Icon(Icons.settings),
+            leading: Icon(Icons.work),
             title: Text('Jobs'),
             onTap: () {
               Navigator.pushNamed(context, '/jobs');
@@ -39,19 +40,12 @@ class MenuDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.info),
-            title: Text('Info'),
+            leading: Icon(Icons.signal_wifi_4_bar_lock_rounded),
+            title: Text('Robot connection'),
             onTap: () {
-              Navigator.pop(context);
-              // Navigate to info or perform some other action
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Log Out'),
-            onTap: () {
-              Navigator.pop(context);
-              // Perform logout or navigate to login screen
+              Navigator.pushNamed(context, '/ip-config');
+
+              // Navigate to settings or perform some other action
             },
           ),
         ],
