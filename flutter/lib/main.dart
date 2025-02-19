@@ -4,7 +4,7 @@ import 'package:robot_app/config_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_state.dart';
 import 'robot_control_page.dart';
-import 'jobs_page.dart';
+import 'jobs/jobs_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
