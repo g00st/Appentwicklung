@@ -108,7 +108,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Connect to WiFi'),
-        content: Text('SSID: $_ssid\nPassword: $_password'),
+        content: Text('$_ssid\n'),
         actions: [
           TextButton(
             onPressed: () {
@@ -210,12 +210,10 @@ class _ConfigScreenState extends State<ConfigScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            Expanded(
+            const Expanded(
               flex: 1,
               child: Center(
-                child: _scanResult != null
-                    ? Text('Scanned: $_scanResult')
-                    : const Text('Point the camera at a WiFi QR code'),
+                child: Text('Point the camera at a WiFi QR code'),
               ),
             ),
           ],

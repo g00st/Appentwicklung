@@ -19,7 +19,7 @@ class AppState extends ChangeNotifier {
 
   Future<void> _loadIPAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _ipAddress = prefs.getString('ip_address') ?? '172.25.200.10';
+    _ipAddress = prefs.getString('ip_address') ?? 'seeding_robot.schaleon.com';
     ApiHandler.IP_address = _ipAddress;
     notifyListeners();
   }

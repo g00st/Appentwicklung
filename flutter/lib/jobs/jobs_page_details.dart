@@ -206,7 +206,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                               ? "Task Completed"
                               : (isReady
                                   ? "RUN TASK"
-                                  : "Robot is ${appState.status.state.toString().split('.').last}"),
+                                  : "Robot is seeding"),
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
