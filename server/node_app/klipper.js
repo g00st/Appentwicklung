@@ -1,11 +1,9 @@
-const { Job, PlateType, KlipperWrapper } = require('./data_types');
+const { Job, PlateType} = require('./data_types');
 const WebSocket = require('ws');
 const fs = require('fs');
 const { time } = require('console');
 
 const KLIPPER_GCODE_PATH = '/home/rpi-klipper/printer_data/gcodes/job.gcode';
-
-
 class KlipperWrapper {
 
     constructor({ ip }) {
@@ -15,10 +13,7 @@ class KlipperWrapper {
         this.idCounter = 1; // for generating unique JSON-RPC ids
         this.status = "INIT"
         this.current_job = null
-
-
     }
-
 
     async connect() {
         return new Promise((resolve, reject) => {
@@ -47,6 +42,11 @@ class KlipperWrapper {
         try {
             const data = JSON.parse(event.data);
             // Check if this message is the response for our request.+
+            fs.appendFile('log.txt', JSON.stringify(data, null, 2), (err) => {
+                if (err) {
+                    console.error('Error writing to file', err);
+                }
+            });
             if (data.method != "notify_history_changed") {
                 return
             }
@@ -124,61 +124,64 @@ class KlipperWrapper {
 
 
 
-    async start_job(job) {
+    async start_job(job){
         console.log("start")
-        if (this.current_job != null) {
+        if (this.current_job != null){
             throw new Error("Job already running");
         }
         this.current_job = job
         //test if job  finished
-        if (await job.finished()) {
+        if (await job.finished()){
             this.current_job = null
             throw new Error("Job already finished");
         }
+        console.log("2")
 
         //check if if valid plate type 
         let type = await PlateType.getById(job.plate_type)
-        if (type == null) {
+        if (type == null){
             this.current_job = null
             throw new Error("Job id not found");
         }
+        console.log("3")
 
         //write gcode file 
-        fs.writeFile(KLIPPER_GCODE_PATH, type.g_code, (err) => {
-            //fs.writeFile('./job.gcode', type.g_code, (err) => {
+        fs.writeFile('/home/rpi-klipper/printer_data/gcodes/job.gcode', type.g_code, (err) => {
+        //fs.writeFile('./job.gcode', type.g_code, (err) => {
             if (err) {
-                this.current_job = null
-                console.error('Error writing to file', err);
-            }
-        });
+            this.current_job = null
+            console.error('Error writing to file', err);
+        }});
+        console.log("4")
         //start job
-        const allowedStatuses = ["ready", "cancelled", "completed", "INIT"];
+        const allowedStatuses = ["ready", "cancelled", "completed","INIT"];
 
         //ceck staus
-        if (!allowedStatuses.includes(this.status)) {
-            this.current_job = null
-            throw new Error("Klipper staus not alowed: ");
-        }
-        try {
-            let res = await this.sendRpcRequest("printer.print.start", { filename: "job.gcode" });
-        } catch (error) {
-            this.current_job = null
-            throw error
-        }
-
-        //check if actualy started 
-        let trys = 100;
-        while (true) {
-            if (this.status == "in_progress") {
-                console.log("6", this.current_job)
-                return this.current_job
+        if (!allowedStatuses.includes( this.status)){
+                this.current_job = null
+                throw new Error("Klipper staus not alowed: ");
             }
+            try{
+                let res = await this.sendRpcRequest("printer.print.start", {filename: "job.gcode"});
+            }catch(error){
+              this.current_job = null
+              throw error
+            }
+       
+        console.log("5")
+        //check if actualy started kinda scuff but who cares 
+        let trys = 100;
+        while(true){
+            if ( this.status == "in_progress"){
+                    console.log("6",this.current_job)
+                    return this.current_job
+            }  
             await new Promise(r => setTimeout(r, 20));
             trys -= 1
-            if (trys < 0) {
+            if (trys <0 ){
                 console.log("6")
                 //this.current_job = null
-                throw new Error("nevver recived in_progress staus from clipper ");
+                throw new Error("nevver recived in_progress staus from clipper " );
             }
         }
     }

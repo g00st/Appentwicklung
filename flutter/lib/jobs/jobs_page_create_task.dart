@@ -40,12 +40,29 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     }
   }
 
-  void _submitForm() async {
+ void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      DateTime.now().toIso8601String();
+      // Auto-generate creation date as current date in ISO 8601 format.
+      final String creationDate = DateTime.now().toIso8601String();
+
+      // Create a new SeedTask with id as null and completionCount as 0.
+      final newTask = SeedTask(
+        id: null,
+        seedType: _seedTypeController.text,
+        plateType: _selectedPlateId ?? "",
+        targetCount: int.tryParse(_targetCountController.text) ?? 0,
+        creationDate: creationDate,
+        completionCount: 0,
+        finishTime: int.tryParse(_finishTimeController.text),
+      );
+
+      print("New Task: $newTask");
+
       try {
+        final createdTask = await ApiHandler.createTask(newTask);
         Navigator.pop(context, true);
       } catch (e) {
+        print("Error creating task: $e");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error creating task: $e")),
         );

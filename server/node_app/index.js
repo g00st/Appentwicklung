@@ -1,7 +1,8 @@
 // Import required modules
 const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
-const { Job, PlateType,KlipperWrapper } = require('./klipper');
+const { KlipperWrapper } = require('./klipper');
+const { Job, PlateType } = require('./data_types');
 const morgan = require('morgan');
 
 // MongoDB connection URL and database/collection names
@@ -90,7 +91,7 @@ const client = new MongoClient(MONGO_URL);
             } catch (err) {
                 res.status(500).json({ message: 'Error deleting job' });
             }
-        });data_types
+        });
 
 
         app.post('/run/:id', async (req, res) => {
