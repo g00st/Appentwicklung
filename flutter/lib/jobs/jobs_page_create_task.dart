@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api_handler.dart';
 
-
 class CreateTaskScreen extends StatefulWidget {
   const CreateTaskScreen({super.key});
 
@@ -40,7 +39,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     }
   }
 
- void _submitForm() async {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       // Auto-generate creation date as current date in ISO 8601 format.
       final String creationDate = DateTime.now().toIso8601String();
@@ -134,12 +133,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         }
                         return null;
                       },
-                    ),
-                    TextFormField(
-                      controller: _finishTimeController,
-                      decoration:
-                          const InputDecoration(labelText: "Finish Time (ms)"),
-                      keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
