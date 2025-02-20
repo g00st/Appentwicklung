@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robot_app/app_state.dart';
+import 'package:plate_seeder/app_state.dart';
 import 'custom_app_bar.dart';
 import 'menu_drawer.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';

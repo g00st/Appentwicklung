@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robot_app/api_handler.dart';
-import 'package:robot_app/app_state.dart';
+import 'package:plate_seeder/api_handler.dart';
+import 'package:plate_seeder/app_state.dart';
 
 class StatusBar extends StatelessWidget {
   @override
