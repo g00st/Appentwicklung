@@ -160,7 +160,8 @@ class ApiHandler {
   }
 
   static Future<List<SeedTask>> getTasks() async {
-    String endpoint = 'http://$IP_address:3000/jobs';
+    //String endpoint = 'http://$IP_address:3000/jobs';
+    String endpoint = 'http://seeding_robot_backend.schaleon.com/jobs';
     try {
       final response = await dio.get(endpoint);
 
@@ -176,7 +177,8 @@ class ApiHandler {
   }
 
   static Future<SeedTask> createTask(SeedTask task) async {
-    String endpoint = 'http://$IP_address:3000/jobs';
+    //String endpoint = 'http://$IP_address:3000/jobs';
+    String endpoint = 'http://seeding_robot_backend.schaleon.com/jobs';
     final taskJson = task.toJson();
     taskJson.remove('_id');
 
@@ -195,7 +197,8 @@ class ApiHandler {
   }
 
   static Future<SeedTask?> getTaskById(String id) async {
-    String endpoint = 'http://$IP_address:3000/jobs/$id'; // GET endpoint
+    //String endpoint = 'http://$IP_address:3000/jobs/$id'; // GET endpoint
+    String endpoint = 'http://seeding_robot_backend.schaleon.com/jobs/$id';
 
     try {
       final response = await dio.get(endpoint);
@@ -217,7 +220,8 @@ class ApiHandler {
     }
 
     final String id = task.id!;
-    String endpoint = 'http://$IP_address:3000/run/$id';
+    //String endpoint = 'http://$IP_address:3000/run/$id';
+    String endpoint = 'http://seeding_robot_backend.schaleon.com/run/$id';
 
     try {
       final response = await dio.post(endpoint);
@@ -233,7 +237,8 @@ class ApiHandler {
   }
 
   static Future<void> deleteTask(String id) async {
-    String endpoint = 'http://$IP_address:3000/jobs/$id'; // DELETE endpoint
+    //String endpoint = 'http://$IP_address:3000/jobs/$id'; // DELETE endpoint
+    String endpoint = 'http://seeding_robot_backend.schaleon.com/jobs/$id';
 
     try {
       final response = await dio.delete(endpoint);
@@ -249,7 +254,8 @@ class ApiHandler {
   }
 
   static Future<PlateType?> getPlatebyId(String id) async {
-    String endpoint = 'http://$IP_address:3000/plates/$id';
+    //String endpoint = 'http://$IP_address:3000/plates/$id';
+    String endpoint = 'http://seeding_robot_backend.schaleon.com/plates/$id';
     final response = await dio.get(endpoint);
 
     if (response.statusCode == 200) {
@@ -260,7 +266,8 @@ class ApiHandler {
   }
 
   static Future<List<PlateType>> getPlateTypes() async {
-    String endpoint = 'http://$IP_address:3000/plates';
+    //String endpoint = 'http://$IP_address:3000/plates';
+    String endpoint = 'http://seeding_robot_backend.schaleon.com/plates';
     try {
       final response = await dio.get(endpoint);
 
